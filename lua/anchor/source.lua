@@ -65,9 +65,11 @@ end
 
 function M.jumpToRecentAnchor()
   -- Ensure there are at least two anchors in the history
-  if #anchorHistory < 2 then
-    print("Not enough anchors in history to jump.")
+  if #anchorHistory < 1 then
+    print("Not enough anchors in history.")
     return
+  elseif #anchorHistory == 1 then
+    anchorHistory[2] = anchorHistory[1]
   end
 
   -- Swap the two most recent anchors
