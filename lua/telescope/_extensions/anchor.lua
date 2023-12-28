@@ -5,10 +5,9 @@ if not has_telescope then
 end
 
 local pickers = require("telescope.builtin")
-local Config = require("todo-comments.config")
-local Highlight = require("todo-comments.highlight")
 local make_entry = require("telescope.make_entry")
 
+local utils = require("anchor.source")
 
 -- Function to find the nearest non-empty line below a given line number
 local function get_next_line_text(filename, line_number)
@@ -65,7 +64,26 @@ local function anchor(opts)
                 return ret
         end
 
-        -- opts.entry_maker = entry_maker
+        -- Define custom action for selection
+        opts.attach_mappings = function(prompt_bufnr, map)
+                local action_state = require('telescope.actions.state')
+                local actions = require('telescope.actions')
+
+                map('i', '<CR>', function()
+                        local selection = action_state.get_selected_entry()
+                        actions.close(prompt_bufnr)
+                        if selection then
+                                -- Add entry to Anchor History
+                                utils.updateAnchorHistory(selection.filename, selection.lnum, 0)
+                                -- Switch to the file and go to the line
+                                vim.cmd('e ' .. selection.filename)
+                                vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
+                        end
+                end)
+
+                return true
+        end
+
         pickers.grep_string(opts)
 end
 
