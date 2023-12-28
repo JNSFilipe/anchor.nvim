@@ -18,6 +18,12 @@ function M.updateAnchorHistory(file, line, col)
   end
 end
 
+function M.addToHistoryNoAnchor()
+  local file = vim.api.nvim_buf_get_name(0)
+  local r, c = unpack(vim.api.nvim_win_get_cursor(0))
+  M.updateAnchorHistory(file, r, c)
+end
+
 function M.dropAnchor()
   -- Get the current cursor position
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))

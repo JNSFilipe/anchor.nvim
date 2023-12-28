@@ -6,4 +6,5 @@ return {
   jumpToNextAnchor = anchor.jumpToNextAnchor,
   jumpToPrevAnchor = anchor.jumpToPrevAnchor,
   jumpToRecentAnchor = anchor.jumpToRecentAnchor,
+  addToHistoryNoAnchor = anchor.addToHistoryNoAnchor,
 }
