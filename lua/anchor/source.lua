@@ -100,4 +100,31 @@ function M.jumpToNextAnchor()
   end
 end
 
+function M.jumpToPrevAnchor()
+  -- Define the anchor pattern
+  local anchorPattern = "<++>"
+
+  -- Save the current search register, search direction, and cursor position
+  local originalSearch = vim.fn.getreg('/')
+  local originalSearchDirection = vim.fn.getreg('g/')
+  local originalCursor = vim.api.nvim_win_get_cursor(0)
+
+  -- Set the search direction to backward
+  vim.fn.setreg('g/', '?')
+
+  -- Search for the previous occurrence of the anchor
+  if vim.fn.search(anchorPattern, 'bW') == 0 then
+    -- If not found, wrap around to the end of the file and search again
+    vim.api.nvim_win_set_cursor(0, { vim.fn.line('$'), 0 })
+    vim.fn.search(anchorPattern, 'bW')
+  end
+
+  -- Restore the original search register, direction, and cursor position if not found
+  if vim.fn.line('.') == originalCursor[1] and vim.fn.col('.') == originalCursor[2] then
+    vim.api.nvim_win_set_cursor(0, originalCursor)
+    vim.fn.setreg('/', originalSearch)
+    vim.fn.setreg('g/', originalSearchDirection)
+  end
+end
+
 return M
