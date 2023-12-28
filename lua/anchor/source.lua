@@ -1,8 +1,14 @@
+local has_comment, comment = pcall(require, "Comment.api")
+
+if not has_comment then
+  error("This plugins requires numToStr/Comment.nvim")
+end
+
 local M = {}
 
 local anchorHistory = {}
 
-local function updateAnchorHistory(file, line, col)
+function M.updateAnchorHistory(file, line, col)
   -- Add the current anchor to the history
   table.insert(anchorHistory, 1, { file = file, line = line, col = col })
 
@@ -11,8 +17,6 @@ local function updateAnchorHistory(file, line, col)
     table.remove(anchorHistory, 3)
   end
 end
-
-
 
 function M.dropAnchor()
   -- Get the current cursor position
@@ -25,11 +29,11 @@ function M.dropAnchor()
   vim.api.nvim_win_set_cursor(0, { row + 1, col })
 
   -- Register in history
-  updateAnchorHistory(vim.api.nvim_buf_get_name(0), row + 1, col)
+  M.updateAnchorHistory(vim.api.nvim_buf_get_name(0), row + 1, col)
 
   -- Comment the line with the anchor
   -- Check if a count is provided, otherwise use 1
-  require("Comment.api").toggle.linewise.count(vim.v.count > 0 and vim.v.count or 1)
+  comment.toggle.linewise.count(vim.v.count > 0 and vim.v.count or 1)
 end
 
 function M.hoistAllAnchors()
@@ -69,12 +73,4 @@ function M.jumpToRecentAnchor()
   vim.api.nvim_win_set_cursor(0, { anchor.line, anchor.col })
 end
 
-local Config = require("todo-comments.config")
-
-local function anchor_search_regex()
-  -- Regex pattern to match the anchor pattern <++>
-  return "<%+%+>"
-end
-
--- <++>
 return M
