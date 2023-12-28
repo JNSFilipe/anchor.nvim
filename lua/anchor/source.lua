@@ -23,13 +23,13 @@ function M.dropAnchor()
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
   -- Insert the anchor '<++>' in a new line below the current cursor position
-  vim.api.nvim_buf_set_lines(0, row, row, false, { "<++>" })
+  vim.api.nvim_buf_set_lines(0, row - 1, row - 1, false, { "<++>" })
 
   -- Move the cursor to the new line with the anchor
-  vim.api.nvim_win_set_cursor(0, { row + 1, col })
+  vim.api.nvim_win_set_cursor(0, { row, col })
 
   -- Register in history
-  M.updateAnchorHistory(vim.api.nvim_buf_get_name(0), row + 1, col)
+  M.updateAnchorHistory(vim.api.nvim_buf_get_name(0), row, col)
 
   -- Comment the line with the anchor
   -- Check if a count is provided, otherwise use 1
