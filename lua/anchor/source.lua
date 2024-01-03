@@ -1,4 +1,5 @@
 local has_comment, comment = pcall(require, "Comment.api")
+local has_telescope, telescope = pcall(require, "telescope.builtin")
 
 if not has_comment then
   error("This plugins requires numToStr/Comment.nvim")
@@ -133,6 +134,45 @@ function M.jumpToPrevAnchor()
     vim.fn.setreg('/', originalSearch)
     vim.fn.setreg('g/', originalSearchDirection)
   end
+end
+
+function M.telescopeAnchorsInProject()
+  telescope.grep_string({
+    search = "<++>",
+    -- Customizing the keymap for this specific call
+    attach_mappings = function(prompt_bufnr, map)
+      local action_state = require('telescope.actions.state')
+
+      -- Define what happens when Enter is pressed
+      map('i', '<CR>', function()
+        local selection = action_state.get_selected_entry()
+        require("telescope.actions").close(prompt_bufnr)
+        if selection then
+          -- Add entry to Anchor History
+          M.updateAnchorHistory(selection.filename, selection.lnum, 0)
+          -- Switch to the file and go to the line
+          vim.cmd('e ' .. selection.filename)
+          vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
+        end
+      end)
+
+      -- Define what happens when Enter is pressed
+      map('n', '<CR>', function()
+        local selection = action_state.get_selected_entry()
+        require("telescope.actions").close(prompt_bufnr)
+        if selection then
+          -- Add entry to Anchor History
+          M.updateAnchorHistory(selection.filename, selection.lnum, 0)
+          -- Switch to the file and go to the line
+          vim.cmd('e ' .. selection.filename)
+          vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
+        end
+      end)
+
+      -- Return true to keep the rest of the mappings
+      return true
+    end,
+  })
 end
 
 return M

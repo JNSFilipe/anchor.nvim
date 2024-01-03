@@ -7,4 +7,5 @@ return {
   jumpToPrevAnchor = anchor.jumpToPrevAnchor,
   jumpToRecentAnchor = anchor.jumpToRecentAnchor,
   addToHistoryNoAnchor = anchor.addToHistoryNoAnchor,
+  telescopeAnchorsInProject = anchor.telescopeAnchorsInProject,
 }
