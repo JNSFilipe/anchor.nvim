@@ -29,14 +29,21 @@ function M.dropAnchor()
   -- Get the current cursor position
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
-  -- Insert the anchor '<++>' in a new line below the current cursor position
-  vim.api.nvim_buf_set_lines(0, row - 1, row - 1, false, { "<++>" })
+  -- Get the current line's text
+  local line = vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1]
 
-  -- Move the cursor to the new line with the anchor
-  vim.api.nvim_win_set_cursor(0, { row, col })
+  -- Concatenate the anchor with the line's content
+  local newLine = "<++> " .. line
+
+  -- Replace the current line with the new content
+  vim.api.nvim_buf_set_lines(0, row - 1, row, false, { newLine })
+
+  -- Move the cursor to after the anchor
+  local newCol = col + 5 -- Adjusting for the length of "<++> "
+  vim.api.nvim_win_set_cursor(0, { row, newCol })
 
   -- Register in history
-  M.updateAnchorHistory(vim.api.nvim_buf_get_name(0), row, col)
+  M.updateAnchorHistory(vim.api.nvim_buf_get_name(0), row, newCol)
 
   -- Comment the line with the anchor
   -- Check if a count is provided, otherwise use 1
